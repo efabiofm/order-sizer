@@ -11,11 +11,11 @@
     <h1>Order size calculator</h1>
     <div class="form-group">
       <label for="entrada">Balance:</label>
-      <input type="number" id="balance" step="0.0001" value="100">
+      <input type="number" id="balance" step="0.0001">
     </div>
     <div class="form-group">
-      <label for="entrada">Risk per trade:</label>
-      <input type="number" id="risk" step="0.0001" value="2">
+      <label for="entrada">Risk (%):</label>
+      <input type="number" id="risk" step="0.0001">
     </div>
     <div class="form-group">
       <label for="entrada">Entry price:</label>
@@ -26,7 +26,10 @@
       <input type="number" id="stop" step="0.0001">
     </div>
     <button id="calcular">Calculate</button>
-    <div id="result"></div>
+    <div id="result">
+      <div>Risk: <strong id="result-risk"></strong></div>
+      <div>Size: <strong id="result-size"></strong></div>
+    </div>
   </div>
   <script src="popup.js"></script>
 </body>

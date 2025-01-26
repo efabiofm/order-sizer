@@ -1,24 +1,55 @@
-// Evento de cálculo
-document.getElementById("calcular").addEventListener("click", () => {
-  const precioEntrada = parseFloat(document.getElementById("entrada").value);
-  const precioStop = parseFloat(document.getElementById("stop").value);
-  const balance = parseFloat(document.getElementById("balance").value);
-  const riskPct = parseFloat(document.getElementById("risk").value);
+// Configuraciones por defecto
+const DEFAULT_BALANCE = 100; // Balance total en USD
+const DEFAULT_RISK_PERCENTAGE = 2; // Riesgo por trade (%)
 
-  // Calcular el riesgo en USD y el tamaño de la posición
-  const riesgoUSD = (balance * riskPct) / 100;
-  const stopDiff = Math.abs(precioEntrada - precioStop);
-  const tamanoOrden = riesgoUSD / stopDiff;
-  const tamanoUSD = tamanoOrden * precioEntrada;
+document.addEventListener("DOMContentLoaded", () => {
+  const balanceInput = document.getElementById("balance");
+  const riskPctInput = document.getElementById("risk");
+  const resultRiskInput = document.getElementById("result-risk");
+  const resultSizeInput = document.getElementById("result-size");
 
-  // Mostrar el resultado
-  document.getElementById("result").innerHTML =
-`Risk: ${riesgoUSD.toFixed(2)} USD<br>
-Size: ${tamanoUSD.toFixed(4)} USD`;
-});
-
-document.addEventListener("keydown", (event) => {
-  if (event.key === "Enter") {
-    document.getElementById("calcular").click();
+  function updateRisk() {
+    const balanceVal = parseFloat(balanceInput.value);
+    const riskPctVal = parseFloat(riskPctInput.value);
+    const riesgoUSD = (balanceVal * riskPctVal) / 100;
+    resultRiskInput.textContent = `${riesgoUSD.toFixed(2)} USD`;
   }
-});
+
+  // Setea los valores previamente almacenados
+  chrome.storage.sync.get(["userBalance", "userRisk"], (data) => {
+    balanceInput.value = data.userBalance || DEFAULT_BALANCE;
+    riskPctInput.value = data.userRisk || DEFAULT_RISK_PERCENTAGE;
+    updateRisk();
+  });
+
+  // Guardar valores al modificarlos
+  balanceInput.addEventListener("change", () => {
+    chrome.storage.sync.set({ userBalance: balanceInput.value });
+    updateRisk();
+  });
+  riskPctInput.addEventListener("change", () => {
+    chrome.storage.sync.set({ userRisk: riskPctInput.value });
+    updateRisk();
+  });
+
+  // Evento de cálculo
+  document.getElementById("calcular").addEventListener("click", () => {
+    const precioEntrada = parseFloat(document.getElementById("entrada").value);
+    const precioStop = parseFloat(document.getElementById("stop").value);
+  
+    // Calcular el riesgo en USD y el tamaño de la posición
+    const stopDiff = Math.abs(precioEntrada - precioStop);
+    const tamanoOrden = riesgoUSD / stopDiff;
+    const tamanoUSD = tamanoOrden * precioEntrada;
+  
+    // Mostrar el resultado
+    resultSizeInput.textContent = `${tamanoUSD.toFixed(4)} USD`;
+  });
+  
+  // Realiza el cálculo al presionar ENTER
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Enter") {
+      document.getElementById("calcular").click();
+    }
+  });
+})
