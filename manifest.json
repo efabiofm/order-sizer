@@ -1,0 +1,16 @@
+{
+  "manifest_version": 3,
+  "name": "Order size calculator",
+  "version": "1.0",
+  "description": "Calcula el tamaño de una posición basado en el riesgo.",
+  "icons": {
+    "48": "icon.png"
+  },
+  "action": {
+    "default_title": "Abrir Calculadora"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "permissions": ["windows"]
+}
