@@ -1,18 +1,21 @@
 // Configuraciones por defecto
 const DEFAULT_BALANCE = 100; // Balance total en USD
 const DEFAULT_RISK_PERCENTAGE = 2; // Riesgo por trade (%)
+let riesgoUSD;
 
 document.addEventListener("DOMContentLoaded", () => {
   const balanceInput = document.getElementById("balance");
   const riskPctInput = document.getElementById("risk");
   const resultRiskInput = document.getElementById("result-risk");
   const resultSizeInput = document.getElementById("result-size");
+  const calculateButton = document.getElementById("calculate");
 
   function updateRisk() {
     const balanceVal = parseFloat(balanceInput.value);
     const riskPctVal = parseFloat(riskPctInput.value);
-    const riesgoUSD = (balanceVal * riskPctVal) / 100;
+    riesgoUSD = (balanceVal * riskPctVal) / 100;
     resultRiskInput.textContent = `${riesgoUSD.toFixed(2)} USD`;
+    calculateButton.click();
   }
 
   // Setea los valores previamente almacenados
@@ -33,23 +36,25 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   // Evento de cálculo
-  document.getElementById("calcular").addEventListener("click", () => {
+  calculateButton.addEventListener("click", () => {
     const precioEntrada = parseFloat(document.getElementById("entrada").value);
     const precioStop = parseFloat(document.getElementById("stop").value);
-  
-    // Calcular el riesgo en USD y el tamaño de la posición
-    const stopDiff = Math.abs(precioEntrada - precioStop);
-    const tamanoOrden = riesgoUSD / stopDiff;
-    const tamanoUSD = tamanoOrden * precioEntrada;
-  
-    // Mostrar el resultado
-    resultSizeInput.textContent = `${tamanoUSD.toFixed(4)} USD`;
+
+    if (precioEntrada && precioStop) {
+      // Calcular el riesgo en USD y el tamaño de la posición
+      const stopDiff = Math.abs(precioEntrada - precioStop);
+      const tamanoOrden = riesgoUSD / stopDiff;
+      const tamanoUSD = tamanoOrden * precioEntrada;
+    
+      // Mostrar el resultado
+      resultSizeInput.textContent = `${tamanoUSD.toFixed(4)} USD`;
+    }
   });
   
   // Realiza el cálculo al presionar ENTER
   document.addEventListener("keydown", (event) => {
     if (event.key === "Enter") {
-      document.getElementById("calcular").click();
+      calculateButton.click();
     }
   });
 })
